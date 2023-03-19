@@ -11,6 +11,8 @@ const operationTab = document.querySelector('.operations__tab-container');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
 const navbar = document.querySelector('.nav');
+const allSections = document.querySelectorAll('.section');
+const allImages = section1.querySelectorAll('img');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -40,12 +42,9 @@ message.innerHTML = 'We use cookies for improved functionalities and analytics. 
 header.append(message);
 document.querySelector('.btn--close-cookie').addEventListener('click',()=>{
   message.remove();
-  // message.parentElement.removeChild(message);
 })
 message.classList.add('cookie-message');
 message.style.backgroundColor = '#37383d';
-// message.style.position = 'fixed';
-// message.style.position = 'fixed';
 
 
 btnScrollTo.addEventListener('click',function(){
@@ -59,10 +58,11 @@ for(let i=0;i<3;i++){
     document.querySelector(id).scrollIntoView({behavior:"smooth"});
   })
 }
+
+
+
 let currentActiveTab = document.querySelector('.operations__tab--active');
 //Tabbed Component
-
-
 operationTab.addEventListener('click',function(e){
   if(e.target.classList.contains('operations__tab')){
     const clicked = e.target.closest('.operations__tab');
@@ -89,15 +89,103 @@ const handleHover = function(e){
     logo.style.opacity =this;
   }
 };
-navbar.addEventListener('mouseover',handleHover.bind(0.5));
+navbar.addEventListener('mouseover',handleHover.bind(0.2));
 navbar.addEventListener('mouseout', handleHover.bind(1));
 
 // sticky navbar
-const sec1coords = section1.getBoundingClientRect();
-window.addEventListener('scroll',function(e){
-  if(this.scrollY > sec1coords.top){
+// const sec1coords = section1.getBoundingClientRect();
+// window.addEventListener('scroll',function(e){
+//   if(this.scrollY > sec1coords.top){
+//     navbar.classList.add('sticky');
+//   }else{
+//     navbar.classList.remove('sticky');
+//   }
+// })
+const obsCallback = function(entries,observer){
+  const [entry] = entries;
+  if(!entry.isIntersecting){
     navbar.classList.add('sticky');
   }else{
     navbar.classList.remove('sticky');
   }
+}
+const obsOption = {
+  root : null,
+  threshold : [0],
+  rootMargin : '-90px'
+}
+const observer = new IntersectionObserver(obsCallback,obsOption);
+observer.observe(header);
+
+// Reveal Sections
+allSections.forEach(function(section){
+  section.classList.add('section--hidden');
+});
+
+const revealSection = function(entries,observer){
+  const [entry] = entries;
+  if(entry.isIntersecting){
+    entry.target.classList.remove('section--hidden')
+    sectionObserver.unobserve(entry.target);
+  }
+}
+
+
+const sectionObserver = new IntersectionObserver(revealSection,{
+  root:null,
+  threshold : 0.25
 })
+
+allSections.forEach(function(section){
+  sectionObserver.observe(section);
+})
+
+//Lazy Loading images
+const imgCallback = function(entries,observer){
+  const entry = entries[0];
+  if(entry.isIntersecting){
+  entry.target.src = entry.target.getAttribute('data-src');
+  // entry.target.classList.remove('lazy-img');
+  entry.target.addEventListener('load',function(){
+    entry.target.classList.remove('lazy-img')
+  })
+  imageObserver.unobserve(entry.target);
+  }
+}
+const imageObserver = new IntersectionObserver(imgCallback,{root:null,threshold : 1});
+
+allImages.forEach(img=>{
+  imageObserver.observe(img);
+})
+
+
+//slider
+let currentSlide = 0;
+const slider = document.querySelector('.slider');
+const leftSlideBtn = document.querySelector('.slider__btn--left');
+const rightSlideBtn = document.querySelector('.slider__btn--right');
+const slides = document.querySelectorAll('.slide');
+// slider.style.scale = '0.5';
+// slider.style.overflow = 'visible';
+
+
+slides.forEach((slide,i)=>{
+  slide.style.transform = `translateX(${i*100}%)`;
+})
+
+rightSlideBtn.addEventListener('click',function(e){
+  currentSlide = currentSlide===slides.length-1 ? 0 : (currentSlide+1);
+  slides.forEach((slide,i) => {
+    slide.style.transform = `translateX(${(i-currentSlide)*100}%)`;
+  })
+  
+})
+leftSlideBtn.addEventListener('click',function(e){
+  currentSlide = currentSlide===0?slides.length-1:currentSlide-1;
+  slides.forEach((slide,i) => {
+    slide.style.transform = `translateX(${(i-currentSlide)*100}%)`;
+  })
+  
+})
+
+
