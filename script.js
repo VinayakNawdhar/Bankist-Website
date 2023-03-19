@@ -91,16 +91,6 @@ const handleHover = function(e){
 };
 navbar.addEventListener('mouseover',handleHover.bind(0.2));
 navbar.addEventListener('mouseout', handleHover.bind(1));
-
-// sticky navbar
-// const sec1coords = section1.getBoundingClientRect();
-// window.addEventListener('scroll',function(e){
-//   if(this.scrollY > sec1coords.top){
-//     navbar.classList.add('sticky');
-//   }else{
-//     navbar.classList.remove('sticky');
-//   }
-// })
 const obsCallback = function(entries,observer){
   const [entry] = entries;
   if(!entry.isIntersecting){
@@ -116,6 +106,7 @@ const obsOption = {
 }
 const observer = new IntersectionObserver(obsCallback,obsOption);
 observer.observe(header);
+
 
 // Reveal Sections
 allSections.forEach(function(section){
@@ -187,5 +178,4 @@ leftSlideBtn.addEventListener('click',function(e){
   })
   
 })
-
 

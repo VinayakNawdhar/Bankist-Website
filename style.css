@@ -586,6 +586,10 @@ h4 {
 .footer__copyright .footer__link {
   font-size: 1.4rem;
 }
+.footer__item:hover{
+  font-weight: 400;
+  transform: translateY(-1px);
+}
 
 /* MODAL WINDOW */
 .modal {
